@@ -2,1458 +2,1130 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GT Decay Tracker, Jam Dunia & Catatan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Growtopia Cyberpunk Tracker</title>
     <style>
-        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif; }
-        body { background-color: #1a1a2e; color: #fff; margin: 0; padding: 12px; display: flex; justify-content: center; position: relative; min-height: 100vh; overflow-x: hidden; }
-        .container { width: 100%; max-width: 1200px; margin: 0 auto; position: relative; z-index: 2; }
-        h1 { text-align: center; color: #00fff5; font-size: clamp(18px, 4vw, 28px); margin: 10px 0 5px 0; }
-        
-        /* EFEK KELOPAK BUNGA SAKURA SAAT TOMBOL DITEKAN */
-        .click-sakura-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 9999; }
-        .click-sakura { position: absolute; background: linear-gradient(135deg, #ffb7c5, #ff8da1); border-radius: 100% 0 100% 0; opacity: 0.9; animation: sakuraExplode 0.8s ease-out forwards; }
-        @keyframes sakuraExplode {
-            0% { transform: translate(0, 0) scale(0.6) rotate(0deg); opacity: 1; }
-            100% { transform: translate(var(--tx), var(--ty)) scale(1.2) rotate(360deg); opacity: 0; }
+        :root {
+            --bg-color: #030712;
+            --card-bg: #0f172a;
+            --border-color: #38bdf8;
+            --accent: #22d3ee;
+            --accent-pink: #f43f5e;
+            --accent-yellow: #fbbf24;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
         }
 
-        /* BAR USER LOGGED IN */
-        .user-bar { background-color: #0f3460; border: 1px solid #00fff5; padding: 12px 15px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; font-size: 13px; }
-        @media (min-width: 600px) { .user-bar { flex-direction: row; justify-content: space-between; align-items: center; } }
-        .user-info-group { display: flex; flex-direction: column; gap: 4px; }
-        .user-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-        .inactivity-warning { font-size: 11px; color: #fffa65; background-color: rgba(255, 250, 101, 0.1); padding: 4px 8px; border-radius: 4px; border: 1px dashed #fffa65; display: inline-block; }
-        .btn-checkin { background-color: #2ed573; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; transition: 0.2s; }
-        .btn-checkin:hover { background-color: #26af5f; }
-        .btn-logout { background-color: #ff4757; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; }
-        .btn-delete-account { background-color: transparent; color: #ff4757; border: 1px solid #ff4757; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; transition: 0.2s; }
-        .btn-delete-account:hover { background-color: rgba(255, 71, 87, 0.1); }
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
 
-        /* CONTAINER LOGIN / DAFTAR */
-        .login-wrapper { display: flex; justify-content: center; align-items: center; min-height: 75vh; }
-        .login-card { background-color: #16213e; padding: 25px; border-radius: 12px; width: 100%; max-width: 380px; box-shadow: 0 8px 20px rgba(0,0,0,0.6); border: 1px solid #0f3460; text-align: center; }
-        .login-card h2 { color: #00fff5; margin-top: 10px; margin-bottom: 5px; font-size: 20px; }
-        .login-card p { color: #8a8d9b; font-size: 12px; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; margin-bottom: 5px; color: #e94560; font-weight: bold; font-size: 12px; }
-        input[type="text"], input[type="password"], input[type="number"], select, textarea { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #0f3460; background-color: #0f3460; color: #fff; outline: none; font-size: 14px; }
-        input:focus, select:focus, textarea:focus { border-color: #00fff5; box-shadow: 0 0 5px rgba(0, 255, 245, 0.4); }
-        textarea { resize: vertical; min-height: 80px; }
+        body {
+            font-family: 'Courier New', Courier, monospace, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: clamp(12px, 3vw, 24px);
+            font-size: clamp(13px, 1.2vw, 16px);
+        }
 
-        .btn-main { background-color: #e94560; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 14px; margin-top: 5px; transition: 0.2s; }
-        .btn-main:hover { background-color: #d73852; }
-        .switch-auth { margin-top: 15px; font-size: 12px; color: #8a8d9b; }
-        .switch-auth a { color: #00fff5; text-decoration: none; font-weight: bold; cursor: pointer; }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: var(--card-bg);
+            padding: clamp(16px, 4vw, 28px);
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.15);
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
 
-        /* ANIMASI CENTANG & SILANG ESTETIK */
-        .auth-logo-container { width: 70px; height: 70px; margin: 0 auto 15px auto; display: flex; justify-content: center; align-items: center; background: rgba(0, 255, 136, 0.05); border-radius: 50%; border: 1.5px dashed #00ff88; }
-        .checkmark-svg { width: 38px; height: 38px; border-radius: 50%; display: block; stroke-width: 3; stroke: #00ff88; stroke-miterlimit: 10; box-shadow: inset 0px 0px 0px #00ff88; animation: fillSuccess .4s ease-in-out .4s forwards, scaleAnim .3s ease-in-out .9s both; }
-        .checkmark-circle { stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 3; stroke-miterlimit: 10; stroke: #00ff88; fill: none; animation: strokeAnim 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards; }
-        .checkmark-check { transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48; animation: strokeAnim 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards; }
+        h2 {
+            text-align: center;
+            color: var(--accent);
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
 
-        .auth-logo-container.error { background: rgba(255, 71, 87, 0.05); border: 1.5px dashed #ff4757; }
-        .auth-logo-container.error .checkmark-svg { stroke: #ff4757; animation: fillError .4s ease-in-out .4s forwards, scaleAnim .3s ease-in-out .9s both; }
-        .auth-logo-container.error .checkmark-circle { stroke: #ff4757; }
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: clamp(0.75rem, 2vw, 0.9rem);
+            margin-bottom: 20px;
+        }
 
-        @keyframes strokeAnim { 100% { stroke-dashoffset: 0; } }
-        @keyframes scaleAnim { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } }
-        @keyframes fillSuccess { 100% { box-shadow: inset 0px 0px 0px 35px rgba(0, 255, 136, 0.15); } }
-        @keyframes fillError { 100% { box-shadow: inset 0px 0px 0px 35px rgba(255, 71, 87, 0.15); } }
+        /* --- NAVIGASI HALAMAN / TAB CYBERPUNK --- */
+        .nav-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 12px;
+        }
 
-        /* NAV TABS & LAINNYA */
-        .nav-tabs { display: flex; gap: 6px; margin-bottom: 15px; justify-content: center; flex-wrap: wrap; }
-        .tab-btn { flex: 1; min-width: 80px; max-width: 140px; padding: 10px 6px; background-color: #16213e; color: #8a8d9b; border: 2px solid #0f3460; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: clamp(10px, 2vw, 12px); text-align: center; }
-        .tab-btn.active { background-color: #0f3460; color: #00fff5; border-color: #00fff5; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .card { background-color: #16213e; padding: 16px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-        .door-container { display: flex; flex-direction: column; gap: 8px; grid-column: 1 / -1; }
-        .door-input-row { display: flex; gap: 8px; align-items: center; }
-        .door-input-row input { flex: 1; }
-        .btn-add-door { background-color: #0f3460; color: #00fff5; border: 1px dashed #00fff5; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; width: fit-content; margin-top: 4px; }
-        .btn-add-door:hover { background-color: rgba(0, 255, 245, 0.1); }
-        .checkbox-container { display: flex; align-items: center; gap: 8px; margin-top: 25px; cursor: pointer; }
-        .checkbox-container input { width: 18px; height: 18px; cursor: pointer; }
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
-        .stat-box { background-color: #0f3460; padding: 12px 8px; border-radius: 8px; text-align: center; font-size: clamp(10px, 2vw, 12px); }
-        .stat-number { font-size: clamp(16px, 3vw, 22px); font-weight: bold; color: #00fff5; margin-top: 4px; }
-        .world-card-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 10px; }
-        .world-item-card { background-color: #0f3460; border: 1.5px solid #16213e; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; }
-        .world-info-header { display: flex; justify-content: space-between; align-items: center; }
-        .world-title { font-size: 18px; font-weight: bold; color: #00fff5; }
-        .status-badge { font-size: 10px; padding: 3px 6px; border-radius: 4px; font-weight: bold; }
-        .badge-safe { background-color: rgba(0, 255, 136, 0.2); color: #00ff88; border: 1px solid #00ff88; }
-        .badge-urgent { background-color: rgba(255, 250, 101, 0.2); color: #fffa65; border: 1px solid #fffa65; }
-        .badge-expired { background-color: rgba(255, 71, 87, 0.2); color: #ff4757; border: 1px solid #ff4757; }
-        .tag-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; display: inline-block; margin-top: 4px; }
-        .tag-lock-luar { background-color: #e94560; color: #fff; }
-        .tag-lock-dalam { background-color: #0f3460; color: #00fff5; border: 1px solid #00fff5; }
-        .tag-public { background-color: #2ed573; color: #fff; }
-        .tag-private { background-color: #57606f; color: #fff; }
-        .time-detail-text { font-size: 12px; color: #e2e8f0; line-height: 1.4; }
-        .time-subtext { font-size: 11px; color: #8a8d9b; }
-        .countdown-box { background-color: #16213e; padding: 8px; border-radius: 6px; text-align: center; }
-        .countdown-label { font-size: 10px; color: #8a8d9b; font-weight: bold; }
-        .countdown-value { font-size: 16px; font-weight: bold; margin-top: 2px; }
-        
-        .card-actions { display: flex; gap: 6px; }
-        .btn-copy { background-color: #00fff5; color: #1a1a2e; border: none; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; flex: 1; transition: 0.2s; }
-        .btn-copy:hover { background-color: #00cca8; }
-        .btn-delete { background-color: #ff4757; color: white; border: none; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; flex: 1; }
+        .tab-btn {
+            background: #030712;
+            border: 1px solid #334155;
+            color: var(--text-muted);
+            padding: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.3s;
+            text-align: center;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+        }
 
-        .clock-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
-        .clock-card { background-color: #16213e; border-radius: 8px; padding: 12px 8px; text-align: center; border: 1px solid #0f3460; }
-        .country-flag { font-size: 22px; }
-        .country-name { font-size: 11px; font-weight: bold; color: #00fff5; margin: 4px 0; }
-        .time-display { font-size: 15px; font-weight: bold; color: #00ff88; }
-        .date-display { font-size: 10px; color: #8a8d9b; }
+        .tab-btn.active {
+            background: rgba(34, 211, 238, 0.15);
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+        }
 
-        /* TAB CATATAN LUAS & BERBAGI */
-        .notes-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 10px; }
-        .note-item-card { background-color: #0f3460; border: 1.5px solid #16213e; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; }
-        .note-title { font-size: 16px; font-weight: bold; color: #00fff5; }
-        .note-body { font-size: 13px; color: #e2e8f0; white-space: pre-wrap; word-break: break-word; line-height: 1.5; max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.15); padding: 10px; border-radius: 6px; }
-        .note-meta { font-size: 10px; color: #8a8d9b; display: flex; justify-content: space-between; align-items: center; }
-        .note-img-preview { width: 100%; max-height: 150px; object-fit: cover; border-radius: 6px; margin-top: 8px; border: 1px solid #16213e; cursor: pointer; transition: 0.2s; }
-        .note-img-preview:hover { opacity: 0.85; transform: scale(1.01); }
-        
-        .sub-tabs { display: flex; gap: 8px; margin-bottom: 15px; }
-        .sub-tab-btn { background-color: #0f3460; border: 1px solid #16213e; color: #8a8d9b; padding: 8px 16px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; flex: 1; text-align: center; }
-        .sub-tab-btn.active { background-color: #e94560; color: #fff; border-color: #e94560; }
+        .page-section {
+            display: none;
+        }
 
-        /* MODAL HALAMAN CATATAN LUAS */
-        .wide-note-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: flex; justify-content: center; align-items: center; z-index: 2000; overflow-y: auto; padding: 15px; }
-        .wide-note-card { background-color: #16213e; padding: 25px; border-radius: 12px; border: 1px solid #00fff5; width: 100%; max-width: 650px; max-height: 90vh; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.9); overflow-y: auto; }
-        .wide-note-card textarea { min-height: 120px; font-size: 14px; line-height: 1.5; }
-        
-        .file-upload-box { border: 2px dashed #0f3460; padding: 10px; border-radius: 6px; text-align: center; background: rgba(0,0,0,0.2); cursor: pointer; }
-        .file-upload-box:hover { border-color: #00fff5; }
+        .page-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
 
-        /* TOMBOL DIRECT LINK HARGA DL (PITERPSTORE & JUBELDL) */
-        .dl-stores-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px; margin-top: 10px; }
-        .dl-direct-box { background-color: #0f3460; border: 1px solid #00fff5; border-radius: 10px; padding: 20px; text-align: center; display: flex; flex-direction: column; gap: 15px; align-items: center; justify-content: space-between; }
-        .btn-piter-direct { background: linear-gradient(135deg, #00fff5, #2ed573); color: #1a1a2e; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 14px; display: inline-block; width: 100%; box-shadow: 0 4px 15px rgba(0, 255, 245, 0.3); transition: 0.2s; }
-        .btn-jubel-direct { background: linear-gradient(135deg, #ffa502, #ff4757); color: #fff; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 14px; display: inline-block; width: 100%; box-shadow: 0 4px 15px rgba(255, 165, 2, 0.3); transition: 0.2s; }
-        .btn-piter-direct:hover, .btn-jubel-direct:hover { opacity: 0.9; transform: translateY(-2px); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-        /* BACKUP & RESTORE SECTION */
-        .backup-buttons { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-backup { background-color: #2ed573; color: #fff; border: none; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; flex: 1; }
-        .btn-restore { background-color: #ffa502; color: #fff; border: none; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; flex: 1; }
+        .account-banner {
+            background: rgba(38, 38, 38, 0.6);
+            border: 1px solid var(--accent);
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
 
-        /* MODAL CUSTOM */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-card { background-color: #16213e; padding: 25px; border-radius: 12px; border: 1px solid #00fff5; max-width: 320px; width: 90%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.8); }
-        .modal-card p { margin: 15px 0; font-size: 14px; color: #e2e8f0; }
-        .modal-buttons { display: flex; gap: 10px; margin-top: 15px; }
-        .btn-cancel { background-color: #57606f; color: white; border: none; padding: 10px; border-radius: 6px; flex: 1; font-weight: bold; cursor: pointer; }
-        .btn-confirm-delete { background-color: #ff4757; color: white; border: none; padding: 10px; border-radius: 6px; flex: 1; font-weight: bold; cursor: pointer; }
+        .account-info span {
+            display: block;
+            font-size: 0.8em;
+            color: var(--text-muted);
+        }
+
+        .account-info strong {
+            font-size: 1.1em;
+            color: var(--accent);
+            font-family: monospace;
+            letter-spacing: 2px;
+        }
+
+        .account-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.85em;
+            border-radius: 2px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .btn-gen {
+            background-color: var(--accent);
+            color: #030712;
+        }
+
+        .btn-load-toggle {
+            background-color: var(--accent-pink);
+            color: white;
+        }
+
+        .load-panel {
+            background: rgba(3, 7, 18, 0.95);
+            border: 1px solid var(--accent-pink);
+            padding: 14px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+            gap: 10px;
+            flex-direction: column;
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.2);
+        }
+
+        .load-panel.active {
+            display: flex;
+        }
+
+        .load-panel label {
+            color: var(--accent-pink);
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .load-row {
+            display: grid;
+            grid-template-columns: 1fr 110px;
+            gap: 8px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: rgba(3, 7, 18, 0.8);
+            padding: 12px 8px;
+            border-radius: 4px;
+            text-align: center;
+            border: 1px solid #1e293b;
+        }
+
+        .stat-box span {
+            display: block;
+            color: var(--text-muted);
+            font-size: clamp(0.65rem, 1.5vw, 0.75rem);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .stat-box strong {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: var(--text-main);
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.85em;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            background: #030712;
+            color: var(--text-main);
+            font-size: 1em;
+            outline: none;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 8px rgba(34, 211, 238, 0.4);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent);
+            color: #030712;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #38bdf8;
+            box-shadow: 0 0 12px rgba(34, 211, 238, 0.6);
+        }
+
+        .section-title {
+            margin: 0 0 16px 0;
+            font-size: 1.1rem;
+            color: var(--accent);
+            border-bottom: 1px solid #334155;
+            padding-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .world-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .world-card {
+            background: #030712;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        /* --- EFEK TEBASAN SAMURAI DIPERLAMBAT & DIBUAT DRAMATIS --- */
+        .world-card.sliced {
+            transition: none !important;
+            animation: samuraiSlice 1.2s forwards cubic-bezier(0.25, 1, 0.5, 1); /* Diperlama jadi 1.2 detik */
+            pointer-events: none;
+            will-change: transform, opacity, filter;
+            transform-origin: center center;
+            z-index: 50;
+        }
+
+        /* Garis kilatan neon ditebalkan dan disesuaikan durasinya */
+        .world-card.sliced::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(135deg, rgba(255,255,255,0) 45%, var(--accent) 48%, #ffffff 50%, var(--accent-pink) 52%, rgba(255,255,255,0) 55%);
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.9);
+            transform: rotate(-45deg) translateX(-100%);
+            animation: slashFlash 0.6s ease-out forwards; /* Kilatan disesuaikan */
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        @keyframes slashFlash {
+            0% { transform: rotate(-45deg) translateX(-100%); opacity: 0; }
+            40% { opacity: 1; }
+            100% { transform: rotate(-45deg) translateX(100%); opacity: 0; }
+        }
+
+        /* Animasi pergerakan kartu lambat & dramatis */
+        @keyframes samuraiSlice {
+            0% {
+                transform: translate3d(0, 0, 0) skew(0deg) scale(1);
+                filter: brightness(1);
+            }
+            15% {
+                transform: translate3d(-8px, 2px, 0) skew(-8deg) scale(1.02);
+                filter: brightness(1.8);
+                border-color: var(--accent-pink);
+                box-shadow: 0 0 30px var(--accent-pink);
+            }
+            30% {
+                transform: translate3d(12px, -4px, 0) skew(12deg) scale(1.01);
+                opacity: 0.95;
+            }
+            60% {
+                transform: translate3d(-15px, 30px, 0) skew(-25deg) scale(0.85);
+                opacity: 0.7;
+                filter: brightness(1.2);
+            }
+            100% {
+                transform: translate3d(30px, 120px, 0) skew(-50deg) scale(0.4);
+                opacity: 0;
+                filter: blur(8px);
+                border-color: var(--accent);
+            }
+        }
+
+        .world-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .world-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: var(--text-main);
+        }
+
+        .world-lock {
+            font-size: 0.8em;
+            color: var(--text-muted);
+            background: #1e293b;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            color: var(--text-muted);
+        }
+
+        .progress-bar-bg {
+            background: #1e293b;
+            border-radius: 2px;
+            height: 6px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .world-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .badge {
+            font-size: 0.75em;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .badge-wait {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-yellow);
+        }
+
+        .badge-ready {
+            background: rgba(34, 211, 238, 0.15);
+            color: var(--accent);
+        }
+
+        .btn-action {
+            padding: 5px 10px;
+            border-radius: 2px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.75em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .btn-edit {
+            background: var(--accent-yellow);
+            color: #030712;
+        }
+
+        .btn-del {
+            background: var(--accent-pink);
+            color: white;
+        }
+
+        .edit-panel {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px dashed var(--accent-yellow);
+            padding: 12px;
+            border-radius: 4px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .edit-panel.active {
+            display: flex;
+        }
+
+        .edit-panel label {
+            font-size: 0.75rem;
+            color: var(--accent-yellow);
+            margin-bottom: 2px;
+        }
+
+        .edit-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .btn-save-edit {
+            background: var(--accent);
+            color: #030712;
+            border: none;
+            padding: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            border-radius: 2px;
+        }
+
+        .btn-cancel-edit {
+            background: transparent;
+            border: 1px solid #334155;
+            color: var(--text-muted);
+            padding: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            border-radius: 2px;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 30px;
+            font-size: 0.9em;
+            border: 1px dashed #334155;
+            border-radius: 4px;
+        }
+
+        /* --- CYBERPUNK MODAL --- */
+        .cyber-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(3, 7, 18, 0.85);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .cyber-modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .cyber-modal {
+            background: #0f172a;
+            border: 2px solid var(--accent);
+            width: 90%;
+            max-width: 420px;
+            padding: 24px;
+            border-radius: 4px;
+            box-shadow: 0 0 25px rgba(34, 211, 238, 0.4);
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .cyber-modal-overlay.active .cyber-modal {
+            transform: scale(1);
+        }
+
+        .cyber-modal::before {
+            content: "[SYSTEM NOTIFICATION]";
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: var(--bg-color);
+            color: var(--accent);
+            font-size: 0.7rem;
+            padding: 0 6px;
+            letter-spacing: 2px;
+        }
+
+        .cyber-modal-title {
+            color: var(--accent);
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .cyber-modal-desc {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .cyber-code-box {
+            background: #030712;
+            border: 1px dashed var(--accent);
+            padding: 12px;
+            text-align: center;
+            font-size: 1.6rem;
+            color: var(--accent);
+            letter-spacing: 4px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            border-radius: 2px;
+            text-shadow: 0 0 8px rgba(34, 211, 238, 0.5);
+        }
+
+        .cyber-modal-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-cyber-copy {
+            background: var(--accent);
+            color: #030712;
+            border: none;
+            padding: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            border-radius: 2px;
+            letter-spacing: 1px;
+        }
+
+        .btn-cyber-close {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid #334155;
+            padding: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            border-radius: 2px;
+            letter-spacing: 1px;
+        }
+
+        /* --- CYBERPUNK TOAST NOTIFICATION --- */
+        .cyber-toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #0f172a;
+            border: 1px solid var(--accent);
+            color: var(--text-main);
+            padding: 12px 20px;
+            border-radius: 4px;
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.3);
+            z-index: 10000;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .cyber-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 480px) {
+            .form-row, .load-row {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
 
-<div class="click-sakura-container" id="clickSakuraContainer"></div>
-
 <div class="container">
-    <!-- HALAMAN AUTH (LOGIN & DAFTAR) -->
-    <div id="loginView" class="login-wrapper">
-        <!-- FORM LOGIN -->
-        <div id="formLogin" class="login-card">
-            <div class="auth-logo-container" id="loginIconContainer">
-                <svg class="checkmark-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
-                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-                </svg>
+    <h2>Cyber Tracker</h2>
+    <div class="subtitle">Secure Account Code Protocol</div>
+    
+    <!-- Banner Akun -->
+    <div class="account-banner">
+        <div class="account-info">
+            <span>Active Access Code:</span>
+            <strong id="displayAccountCode">LOADING...</strong>
+        </div>
+        <div class="account-actions">
+            <button class="btn-small btn-gen" onclick="createNewAccount()">New Acc</button>
+            <button class="btn-small btn-load-toggle" onclick="toggleLoadPanel()">Input Code</button>
+        </div>
+    </div>
+
+    <!-- Panel Input Code Tersembunyi -->
+    <div class="load-panel" id="loadPanel">
+        <label for="inputAccountCode">Masukkan Kode Akses 5 Karakter:</label>
+        <div class="load-row">
+            <input type="text" id="inputAccountCode" placeholder="Cth: 1V3DY" maxlength="5" style="text-transform: uppercase;">
+            <button class="btn-submit" style="margin-top:0;" onclick="loadAccountByCode()">Load</button>
+        </div>
+    </div>
+
+    <!-- SISTEM NAVIGASI TAB / HALAMAN -->
+    <div class="nav-tabs">
+        <button class="tab-btn active" id="tabBtn1" onclick="switchTab(1)">⚡ Dashboard & Input</button>
+        <button class="tab-btn" id="tabBtn2" onclick="switchTab(2)">📂 Database World (<span id="tabCount">0</span>)</button>
+    </div>
+
+    <!-- HALAMAN 1: DASHBOARD & FORM TAMBAH -->
+    <div class="page-section active" id="page1">
+        <div class="stats-container">
+            <div class="stat-box">
+                <span>Total</span>
+                <strong id="statTotal">0</strong>
             </div>
-            <h2>Masuk Akun</h2>
-            <p>Masukkan Username & Password Anda</p>
+            <div class="stat-box">
+                <span>Ready</span>
+                <strong id="statReady" style="color: var(--accent);">0</strong>
+            </div>
+            <div class="stat-box">
+                <span>Proses</span>
+                <strong id="statWaiting" style="color: var(--accent-yellow);">0</strong>
+            </div>
+        </div>
+
+        <div class="section-title">Input World Baru</div>
+        
+        <div class="form-group">
+            <label for="worldName">Nama World</label>
+            <input type="text" id="worldName" placeholder="Contoh: FARMING123">
+        </div>
+
+        <div class="form-row">
             <div class="form-group">
-                <label for="loginUser">Username / GrowID:</label>
-                <input type="text" id="loginUser" placeholder="Contoh: AlexGT" autocomplete="off">
+                <label for="lockType">Jenis Lock</label>
+                <select id="lockType">
+                    <option value="Small Lock">Small Lock</option>
+                    <option value="Big Lock">Big Lock</option>
+                    <option value="Huge Lock">Huge Lock</option>
+                </select>
             </div>
             <div class="form-group">
-                <label for="loginPass">Password:</label>
-                <input type="password" id="loginPass" placeholder="Masukkan password">
-            </div>
-            <button class="btn-main" onclick="handleLogin()">Login</button>
-            <div class="switch-auth">
-                Belum punya akun? <a onclick="toggleAuthMode('register')">Daftar Akun Baru</a>
+                <label for="currentDay">Posisi Hari (1-180)</label>
+                <input type="number" id="currentDay" min="1" max="180" placeholder="Misal: 30">
             </div>
         </div>
 
-        <!-- FORM DAFTAR AKUN BARU -->
-        <div id="formRegister" class="login-card" style="display: none;">
-            <div class="auth-logo-container" id="regIconContainer">
-                <svg class="checkmark-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
-                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-                </svg>
-            </div>
-            <h2>Daftar Akun Baru</h2>
-            <p>Buat Username & Password untuk mendaftar</p>
-            <div class="form-group">
-                <label for="regUser">Username / GrowID Baru:</label>
-                <input type="text" id="regUser" placeholder="Buat username baru" autocomplete="off">
-            </div>
-            <div class="form-group">
-                <label for="regPass">Password Baru:</label>
-                <input type="password" id="regPass" placeholder="Buat password baru">
-            </div>
-            <button class="btn-main" onclick="handleRegister()">Daftar Akun Baru</button>
-            <div class="switch-auth">
-                Sudah punya akun? <a onclick="toggleAuthMode('login')">Kembali ke Login</a>
-            </div>
+        <div class="form-group">
+            <label for="targetTime">Jam Target Pecah (Format: HH:MM)</label>
+            <input type="text" id="targetTime" placeholder="Contoh: 12:00" value="12:00" maxlength="5">
         </div>
+
+        <button class="btn-submit" onclick="addWorld()">Simpan World ke Akun</button>
     </div>
 
-    <!-- HALAMAN UTAMA TRACKER -->
-    <div id="appView" style="display: none;">
-        <!-- Header Profil User & Peringatan Check-in -->
-        <div class="user-bar">
-            <div class="user-info-group">
-                <span>👤 Username: <strong id="currentUserDisplay" style="color: #00fff5;">-</strong></span>
-                <span id="checkinWarning" class="inactivity-warning">⚠️ Loading status inaktif...</span>
-            </div>
-            <div class="user-actions">
-                <button class="btn-checkin" onclick="handleManualCheckin()" title="Reset Waktu Inaktif Ke 90 Hari">📌 Check-In</button>
-                <button class="btn-delete-account" onclick="openDeleteAccountModal()" title="Hapus akun dan seluruh datanya secara permanen">🗑️ Hapus Akun</button>
-                <button class="btn-logout" onclick="handleLogout()">Keluar</button>
-            </div>
-        </div>
-
-        <h1>GT Decay Tracker</h1>
-
-        <div class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('beranda')">🏠 Beranda</button>
-            <button class="tab-btn" onclick="switchTab('kelola')">➕ Kelola</button>
-            <button class="tab-btn" onclick="switchTab('catatan')">📝 Catatan</button>
-            <button class="tab-btn" onclick="switchTab('harga')">💎 Harga DL</button>
-            <button class="tab-btn" onclick="switchTab('jam')">🌍 Jam Dunia</button>
-        </div>
-
-        <!-- TAB 1: BERANDA -->
-        <div id="tab-beranda" class="tab-content active">
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <div>Total World</div>
-                    <div class="stat-number" id="totalWorlds">0</div>
-                </div>
-                <div class="stat-box">
-                    <div>Prioritas</div>
-                    <div class="stat-number" id="urgentWorlds" style="color: #fffa65;">0</div>
-                </div>
-                <div class="stat-box">
-                    <div>Decayed</div>
-                    <div class="stat-number" id="readyWorlds" style="color: #ff4757;">0</div>
-                </div>
-            </div>
-            <div class="card">
-                <h3 style="font-size: 15px; margin: 0 0 10px 0;">🔥 Daftar World Dipantau (Private & Public)</h3>
-                <div id="homeWorldList" class="world-card-list"></div>
-            </div>
-        </div>
-
-        <!-- TAB 2: KELOLA WORLD -->
-        <div id="tab-kelola" class="tab-content">
-            <div class="card">
-                <h3 style="font-size: 15px; margin: 0 0 10px 0;">Tambah World Baru</h3>
-                <div class="form-grid">
-                    <div>
-                        <label for="worldName">Nama World:</label>
-                        <input type="text" id="worldName" placeholder="Contoh: BUYFOSSIL" autocomplete="off">
-                    </div>
-                    
-                    <!-- CONTAINER DOOR ID DINAMIS (MAX 10) -->
-                    <div class="door-container">
-                        <label>Door ID (Opsional - Maksimal 10):</label>
-                        <div id="doorInputsWrapper">
-                            <div class="door-input-row" data-index="1">
-                                <input type="text" class="door-id-field" placeholder="Door ID 1 (Contoh: 1)" autocomplete="off" oninput="checkDoorInputs()">
-                            </div>
-                        </div>
-                        <button type="button" id="btnAddDoorRow" class="btn-add-door" style="display: none;" onclick="addDoorInputField()">➕ Tambah Door ID</button>
-                    </div>
-
-                    <div>
-                        <label for="lockType">Jenis Lock Pecah:</label>
-                        <select id="lockType">
-                            <option value="Lock Luar">🔓 Lock Luar (Main Lock)</option>
-                            <option value="Lock Dalam">🔐 Lock Dalam (Sub Lock)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="privacyType">Akses List (Privasi):</label>
-                        <select id="privacyType">
-                            <option value="Private">🔒 Private (Hanya Saya)</option>
-                            <option value="Public">🌐 Public (Semua GrowID Bisa Baca)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="timezoneSelect">Zona Waktu Target:</label>
-                        <select id="timezoneSelect">
-                            <option value="Asia/Makassar">🇮🇩 Indo (WITA - Kalsel/Bali)</option>
-                            <option value="Asia/Jakarta">🇮🇩 Indo (WIB - Jakarta/Jawa)</option>
-                            <option value="Asia/Jayapura">🇮🇩 Indo (WIT - Papua)</option>
-                            <option value="Europe/London">🇬🇧 Inggris (London)</option>
-                            <option value="America/New_York">🇺🇸 Amerika (New York)</option>
-                            <option value="America/Los_Angeles">🇺🇸 Amerika (LA)</option>
-                            <option value="Asia/Tokyo">🇯🇵 Jepang (Tokyo)</option>
-                            <option value="Asia/Riyadh">🇸🇦 Arab Saudi (Mecca)</option>
-                            <option value="Australia/Sydney">🇦🇺 Australia (Sydney)</option>
-                            <option value="Asia/Singapore">🇸🇬 Singapura</option>
-                            <option value="Asia/Seoul">🇰🇷 Korea Selatan</option>
-                            <option value="Europe/Berlin">🇩🇪 Jerman (Berlin)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="daysRemaining">Sisa Hari Lock (1 - 180):</label>
-                        <input type="number" id="daysRemaining" min="1" max="180" placeholder="Contoh: 48">
-                    </div>
-                    <div>
-                        <label for="targetTimeText">Jam Pecah (Ketik Manual):</label>
-                        <input type="text" id="targetTimeText" placeholder="Contoh: 12:00">
-                    </div>
-                    <div class="checkbox-container">
-                        <input type="checkbox" id="hideOwner">
-                        <label for="hideOwner" style="color: #00fff5; margin: 0; cursor: pointer;">🕶️ Sembunyikan GrowID Saya (PLAYER ARE HIDING)</label>
-                    </div>
-                </div>
-                <button class="btn-main" onclick="addWorld()">Tambah World</button>
-            </div>
-
-            <!-- FITUR BACKUP & RESTORE DATA -->
-            <div class="card">
-                <h3 style="font-size: 15px; margin: 0 0 8px 0;">💾 Cadangkan & Pemulihan Data (Backup)</h3>
-                <p style="font-size: 11px; color: #8a8d9b; margin-bottom: 12px;">Simpan file data world Anda untuk mengantisipasi cache browser terhapus.</p>
-                <div class="backup-buttons">
-                    <button class="btn-backup" onclick="exportDataJson()">📥 Unduh Cadangan (.json)</button>
-                    <button class="btn-restore" onclick="document.getElementById('importFile').click()">📤 Muat Data (.json)</button>
-                    <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importDataJson(event)">
-                </div>
-            </div>
-
-            <div class="card">
-                <h3 style="font-size: 15px; margin: 0 0 10px 0;">Kelola List World Milik Saya</h3>
-                <div id="manageWorldList" class="world-card-list"></div>
-            </div>
-        </div>
-
-        <!-- TAB 3: CATATAN LUAS & BERBAGI -->
-        <div id="tab-catatan" class="tab-content">
-            <div class="card" style="text-align: center; padding: 25px;">
-                <h3 style="font-size: 16px; margin: 0 0 8px 0; color: #00fff5;">✍️ Papan Catatan Luas & Foto</h3>
-                <p style="font-size: 12px; color: #8a8d9b; margin-bottom: 20px;">Tulis catatan penting, list bahan, atau lampirkan foto dan bagikan secara Public atau Private!</p>
-                <button class="btn-main" style="max-width: 280px; margin: 0 auto; font-size: 14px; padding: 14px;" onclick="openWideNoteModal()">📝 Buat Catatan & Foto Baru</button>
-            </div>
-
-            <div class="card">
-                <div class="sub-tabs">
-                    <button class="sub-tab-btn active" id="subTabMyNotesBtn" onclick="switchSubTab('my')">🔒 Catatan Saya</button>
-                    <button class="sub-tab-btn" id="subTabPublicNotesBtn" onclick="switchSubTab('public')">🌐 Catatan Publik</button>
-                </div>
-
-                <!-- Konten List Catatan Saya -->
-                <div id="subContainerMyNotes">
-                    <div id="notesListContainer" class="notes-list"></div>
-                </div>
-
-                <!-- Konten List Catatan Publik -->
-                <div id="subContainerPublicNotes" style="display: none;">
-                    <div id="publicNotesListContainer" class="notes-list"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 4: CEK HARGA DL (PITERPSTORE & JUBELDL) -->
-        <div id="tab-harga" class="tab-content">
-            <div class="card">
-                <h3 style="font-size: 15px; margin: 0 0 8px 0;">💎 Cek Harga DL Real-Time (Official Stores)</h3>
-                <p style="font-size: 12px; color: #8a8d9b; margin-bottom: 20px;">Silakan pilih platform langganan tepercaya di bawah ini untuk mengecek harga pasaran Diamond Lock (DL) & World Lock (WL) secara instan dan akurat.</p>
-                
-                <div class="dl-stores-grid">
-                    <!-- PiterPStore Box -->
-                    <div class="dl-direct-box">
-                        <div style="font-size: 32px;">🌐</div>
-                        <div>
-                            <div style="font-size: 14px; color: #00fff5; font-weight: bold; margin-bottom: 4px;">PiterPStore Official</div>
-                            <div style="font-size: 11px; color: #8a8d9b;">Cek rate harga DL & BGL harian secara transparan.</div>
-                        </div>
-                        <a href="https://piterpstore.com/" target="_blank" class="btn-piter-direct">🔗 Buka PiterPStore</a>
-                    </div>
-
-                    <!-- JubelDL Box -->
-                    <div class="dl-direct-box">
-                        <div style="font-size: 32px;">⚡</div>
-                        <div>
-                            <div style="font-size: 14px; color: #ffa502; font-weight: bold; margin-bottom: 4px;">JubelDL Official</div>
-                            <div style="font-size: 11px; color: #8a8d9b;">Platform alternatif transaksi dan cek harga DL terpercaya.</div>
-                        </div>
-                        <a href="https://jubeldl.com/" target="_blank" class="btn-jubel-direct">🔗 Buka JubelDL</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 5: JAM DUNIA -->
-        <div id="tab-jam" class="tab-content">
-            <div class="clock-grid" id="clockGrid"></div>
+    <!-- HALAMAN 2: DATABASE WORLD TERKONEKSI -->
+    <div class="page-section" id="page2">
+        <div class="section-title">Database World Terkoneksi</div>
+        <div class="world-list" id="worldListContainer">
+            <!-- Card world muncul otomatis di halaman 2 -->
         </div>
     </div>
 </div>
 
-<!-- MODAL POPUP FORM CATATAN LUAS & UPLOAD FOTO -->
-<div id="wideNoteModal" class="wide-note-modal-overlay" style="display: none;">
-    <div class="wide-note-card">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h3 style="color: #00fff5; margin: 0; font-size: 18px;">✍️ Buat Catatan & Upload Foto</h3>
-            <button onclick="closeWideNoteModal()" style="background: transparent; border: none; color: #ff4757; font-size: 18px; font-weight: bold; cursor: pointer;">✕</button>
+<!-- CYBERPUNK CUSTOM MODAL -->
+<div class="cyber-modal-overlay" id="cyberModal">
+    <div class="cyber-modal">
+        <div class="cyber-modal-title">Akses Akun Berhasil Dibuat</div>
+        <div class="cyber-modal-desc">
+            Simpan kode akses di bawah ini. Jika browser di-refresh atau data terhapus, gunakan kode ini untuk memulihkan seluruh world Anda.
         </div>
-        <div class="form-group" style="margin-bottom: 0;">
-            <label for="wideNoteTitle">Judul Catatan:</label>
-            <input type="text" id="wideNoteTitle" placeholder="Contoh: Rencana World / Foto Bukti" autocomplete="off">
-        </div>
-        <div class="form-group" style="margin-bottom: 0;">
-            <label for="wideNoteContent">Isi Catatan (Area Luas):</label>
-            <textarea id="wideNoteContent" placeholder="Tulis catatan panjang atau daftar lengkap di sini..."></textarea>
-        </div>
-        <div class="form-group" style="margin-bottom: 0;">
-            <label>Lampirkan Foto (Opsional):</label>
-            <div class="file-upload-box" onclick="document.getElementById('noteImageFile').click()">
-                <span id="uploadLabelText" style="font-size: 12px; color: #00fff5;">📷 Klik untuk Pilih Foto / Gambar</span>
-                <input type="file" id="noteImageFile" accept="image/*" style="display: none;" onchange="handleImagePreview(event)">
-            </div>
-            <!-- Preview Gambar Terpilih -->
-            <div id="imagePreviewContainer" style="margin-top: 8px; display: none; text-align: center; position: relative;">
-                <img id="previewImgTag" src="" onclick="openZoomModal(this.src)" style="max-height: 120px; border-radius: 6px; border: 1px solid #00fff5; cursor: pointer;" title="Klik untuk zoom foto">
-                <br>
-                <button type="button" onclick="clearSelectedImage()" style="background: #ff4757; color: white; border: none; padding: 3px 8px; border-radius: 4px; font-size: 10px; margin-top: 4px; cursor: pointer;">Hapus Foto</button>
-            </div>
-        </div>
-        <div class="form-group" style="margin-bottom: 0;">
-            <label for="wideNotePrivacy">Akses Bagikan:</label>
-            <select id="wideNotePrivacy">
-                <option value="Private">🔒 Private (Hanya Saya)</option>
-                <option value="Public">🌐 Public (Bisa Dilihat Player Lain)</option>
-            </select>
-        </div>
-        <div style="display: flex; gap: 10px; margin-top: 5px;">
-            <button class="btn-cancel" onclick="closeWideNoteModal()">Batal</button>
-            <button class="btn-main" style="margin-top: 0; flex: 1;" onclick="saveWideNote()">Simpan Catatan</button>
+        <div class="cyber-code-box" id="modalCodeText">A1B2C</div>
+        <div class="cyber-modal-actions">
+            <button class="btn-cyber-copy" onclick="copyModalCode()">Salin Kode</button>
+            <button class="btn-cyber-close" onclick="closeCyberModal()">Tutup</button>
         </div>
     </div>
 </div>
 
-<!-- MODAL POPUP LIHAT FOTO UKURAN PENUH (ZOOM) -->
-<div id="imageZoomModal" class="modal-overlay" style="display: none; z-index: 3000;" onclick="closeZoomModal()">
-    <div style="background: #16213e; padding: 15px; border-radius: 10px; border: 1px solid #00fff5; max-width: 95%; max-height: 95vh; text-align: center; position: relative;" onclick="event.stopPropagation()">
-        <button onclick="closeZoomModal()" style="position: absolute; top: -12px; right: -12px; background: #ff4757; color: white; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">✕</button>
-        <img id="zoomImgTag" src="" style="max-width: 100%; max-height: 80vh; border-radius: 6px; object-fit: contain;">
-        <div style="margin-top: 10px; font-size: 12px; color: #8a8d9b;">Ketuk di luar gambar atau tombol silang untuk menutup</div>
-    </div>
-</div>
-
-<!-- MODAL POPUP ESTETIK -->
-<div id="aestheticModal" class="modal-overlay" style="display: none;">
-    <div class="modal-card">
-        <div class="auth-logo-container" id="modalIconContainer">
-            <svg class="checkmark-svg" id="modalSvgIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
-                <path class="checkmark-check" id="modalSvgPath" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-            </svg>
-        </div>
-        <h3 id="modalTitle" style="color: #00fff5; margin: 5px 0 10px 0;">Informasi</h3>
-        <p id="aestheticModalText">Pesan di sini</p>
-        <button class="btn-main" onclick="closeAestheticModal()">OK</button>
-    </div>
-</div>
-
-<!-- MODAL KONFIRMASI HAPUS WORLD -->
-<div id="deleteModal" class="modal-overlay" style="display: none;">
-    <div class="modal-card">
-        <p id="modalText">Yakin ingin menghapus world ini?</p>
-        <div class="modal-buttons">
-            <button class="btn-cancel" onclick="closeDeleteModal()">Batal</button>
-            <button class="btn-confirm-delete" onclick="confirmDeleteWorld()">Hapus</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL KONFIRMASI HAPUS CATATAN -->
-<div id="deleteNoteModal" class="modal-overlay" style="display: none;">
-    <div class="modal-card">
-        <p>Yakin ingin menghapus catatan ini?</p>
-        <div class="modal-buttons">
-            <button class="btn-cancel" onclick="closeDeleteNoteModal()">Batal</button>
-            <button class="btn-confirm-delete" onclick="confirmDeleteNote()">Hapus</button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL KONFIRMASI HAPUS AKUN -->
-<div id="deleteAccountModal" class="modal-overlay" style="display: none;">
-    <div class="modal-card">
-        <p style="color: #ff4757; font-weight: bold;">⚠️ PERINGATAN PENGHAPUSAN AKUN</p>
-        <p>Apakah Anda yakin ingin menghapus akun Anda secara permanen?</p>
-        <div class="modal-buttons">
-            <button class="btn-cancel" onclick="closeDeleteAccountModal()">Batal</button>
-            <button class="btn-confirm-delete" onclick="confirmDeleteAccount()">Hapus</button>
-        </div>
-    </div>
-</div>
+<!-- CYBERPUNK TOAST NOTIFICATION -->
+<div class="cyber-toast" id="cyberToast">Notifikasi Sistem</div>
 
 <script>
-    // FUNGSI EFEK SAKURA MELETUP KETIKA TOMBOL DI-KLIK
-    document.addEventListener('click', function(e) {
-        const target = e.target.closest('button, .tab-btn, a');
-        if (!target) return;
+    let currentAccountCode = localStorage.getItem('gt_active_account') || "";
+    let allAccounts = JSON.parse(localStorage.getItem('gt_all_accounts')) || {};
+    let lastCheckedDate = localStorage.getItem('gt_account_date') || "";
 
-        const rect = target.getBoundingClientRect();
-        const clickX = rect.left + rect.width / 2;
-        const clickY = rect.top + rect.height / 2;
+    if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+    }
 
-        const container = document.getElementById('clickSakuraContainer');
-        const particleCount = 10;
+    function showToast(message) {
+        const toast = document.getElementById('cyberToast');
+        toast.innerText = message;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2500);
+    }
 
-        for (let i = 0; i < particleCount; i++) {
-            const sakura = document.createElement('div');
-            sakura.className = 'click-sakura';
-
-            const size = Math.random() * 8 + 6;
-            sakura.style.width = `${size}px`;
-            sakura.style.height = `${size * 1.3}px`;
-            sakura.style.left = `${clickX}px`;
-            sakura.style.top = `${clickY}px`;
-
-            const angle = Math.random() * Math.PI * 2;
-            const distance = Math.random() * 80 + 30;
-            const tx = Math.cos(angle) * distance;
-            const ty = Math.sin(angle) * distance;
-
-            sakura.style.setProperty('--tx', `${tx}px`);
-            sakura.style.setProperty('--ty', `${ty}px`);
-
-            container.appendChild(sakura);
-
-            setTimeout(() => {
-                sakura.remove();
-            }, 800);
+    function generateRandomCode() {
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let code = "";
+        for (let i = 0; i < 5; i++) {
+            code += chars.charAt(Math.floor(Math.random() * chars.length));
         }
-    });
+        return code;
+    }
 
-    let currentUser = null;
-    let worlds = [];
-    let notes = [];
-    let selectedWorldIdToDelete = null;
-    let selectedNoteIdToDelete = null;
-    let aestheticCallback = null;
-    let temporaryBase64Image = '';
-    
-    const THREE_MONTHS_MS = 90 * 24 * 60 * 60 * 1000;
-
-    const locations = [
-        { flag: '🇮🇩', name: 'Indo (WIB)', zone: 'Asia/Jakarta' },
-        { flag: '🇮🇩', name: 'Indo (WITA)', zone: 'Asia/Makassar' },
-        { flag: '🇮🇩', name: 'Indo (WIT)', zone: 'Asia/Jayapura' },
-        { flag: '🇬🇧', name: 'Inggris', zone: 'Europe/London' },
-        { flag: '🇺🇸', name: 'Amerika (NY)', zone: 'America/New_York' },
-        { flag: '🇺🇸', name: 'Amerika (LA)', zone: 'America/Los_Angeles' },
-        { flag: '🇯🇵', name: 'Jepang', zone: 'Asia/Tokyo' },
-        { flag: '🇸🇦', name: 'Arab Saudi', zone: 'Asia/Riyadh' },
-        { flag: '🇦🇺', name: 'Australia', zone: 'Australia/Sydney' },
-        { flag: '🇸🇬', name: 'Singapura', zone: 'Asia/Singapore' },
-        { flag: '🇰🇷', name: 'Korea Sel.', zone: 'Asia/Seoul' },
-        { flag: '🇩🇪', name: 'Jerman', zone: 'Europe/Berlin' }
-    ];
-
-    function checkDoorInputs() {
-        const fields = document.querySelectorAll('.door-id-field');
-        const lastField = fields[fields.length - 1];
-        const addBtn = document.getElementById('btnAddDoorRow');
-
-        if (lastField.value.trim() !== '' && fields.length < 10) {
-            addBtn.style.display = 'block';
-        } else {
-            addBtn.style.display = 'none';
+    if (!currentAccountCode || !allAccounts[currentAccountCode]) {
+        let newCode = generateRandomCode();
+        while (allAccounts[newCode]) {
+            newCode = generateRandomCode();
         }
+        currentAccountCode = newCode;
+        allAccounts[currentAccountCode] = [];
+        localStorage.setItem('gt_active_account', currentAccountCode);
+        localStorage.setItem('gt_all_accounts', JSON.stringify(allAccounts));
     }
 
-    function addDoorInputField() {
-        const wrapper = document.getElementById('doorInputsWrapper');
-        const fields = wrapper.querySelectorAll('.door-id-field');
-        
-        if (fields.length < 10) {
-            const nextIndex = fields.length + 1;
-            const newRow = document.createElement('div');
-            newRow.className = 'door-input-row';
-            newRow.dataset.index = nextIndex;
-            newRow.innerHTML = `<input type="text" class="door-id-field" placeholder="Door ID ${nextIndex} (Opsional)" autocomplete="off" oninput="checkDoorInputs()">`;
-            wrapper.appendChild(newRow);
-            document.getElementById('btnAddDoorRow').style.display = 'none';
-        }
+    function getActiveWorlds() {
+        return allAccounts[currentAccountCode] || [];
     }
 
-    function resetDoorInputsForm() {
-        const wrapper = document.getElementById('doorInputsWrapper');
-        wrapper.innerHTML = `
-            <div class="door-input-row" data-index="1">
-                <input type="text" class="door-id-field" placeholder="Door ID 1 (Contoh: 1)" autocomplete="off" oninput="checkDoorInputs()">
-            </div>
-        `;
-        document.getElementById('btnAddDoorRow').style.display = 'none';
+    function saveActiveWorlds(worlds) {
+        allAccounts[currentAccountCode] = worlds;
+        localStorage.setItem('gt_all_accounts', JSON.stringify(allAccounts));
     }
 
-    // FUNGSI HANDLE PREVIEW GAMBAR SAAT UPLOAD
-    function handleImagePreview(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                temporaryBase64Image = e.target.result;
-                document.getElementById('previewImgTag').src = temporaryBase64Image;
-                document.getElementById('imagePreviewContainer').style.display = 'block';
-                document.getElementById('uploadLabelText').innerText = `✅ Foto Dipilih: ${file.name}`;
-            };
-            reader.readAsDataURL(file);
-        }
-    }
+    function checkAndAutoAdvanceDays() {
+        const todayStr = new Date().toDateString();
 
-    function clearSelectedImage() {
-        temporaryBase64Image = '';
-        document.getElementById('noteImageFile').value = '';
-        document.getElementById('imagePreviewContainer').style.display = 'none';
-        document.getElementById('uploadLabelText').innerText = '📷 Klik untuk Pilih Foto / Gambar';
-    }
+        if (lastCheckedDate && lastCheckedDate !== todayStr) {
+            const lastDate = new Date(lastCheckedDate);
+            const currentDate = new Date(todayStr);
+            const diffTime = currentDate - lastDate;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-    function openZoomModal(imgSrc) {
-        document.getElementById('zoomImgTag').src = imgSrc;
-        document.getElementById('imageZoomModal').style.display = 'flex';
-    }
-
-    function closeZoomModal() {
-        document.getElementById('imageZoomModal').style.display = 'none';
-    }
-
-    // FUNGSI SALIN FORMAT /JOIN CEPAT KE CLIPBOARD
-    function copyJoinCommand(worldName, doorIdsStr) {
-        let command = `/join ${worldName}`;
-        if (doorIdsStr) {
-            const firstDoor = doorIdsStr.split(',')[0].trim();
-            if (firstDoor) {
-                command = `/join ${worldName} ${firstDoor}`;
+            if (diffDays > 0) {
+                Object.keys(allAccounts).forEach(accKey => {
+                    allAccounts[accKey].forEach(item => {
+                        if (item.day < 180) {
+                            item.day += diffDays;
+                            if (item.day > 180) item.day = 180;
+                            item.notified = false;
+                        }
+                    });
+                });
+                localStorage.setItem('gt_all_accounts', JSON.stringify(allAccounts));
             }
         }
-        
-        navigator.clipboard.writeText(command).then(() => {
-            showAestheticModal('success', 'Tersalin', `Berhasil menyalin perintah:\n"${command}"`);
-        }).catch(() => {
-            showAestheticModal('error', 'Gagal', 'Gagal menyalin teks ke clipboard.');
-        });
+        localStorage.setItem('gt_account_date', todayStr);
     }
 
-    // FITUR EKSPOR DATA KE FILE JSON (Mencakup World & Catatan)
-    function exportDataJson() {
-        const exportObj = { worlds: worlds, notes: notes };
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj, null, 2));
-        const downloadAnchor = document.createElement('a');
-        downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchor.setAttribute("download", `gt_tracker_backup_${currentUser || 'data'}.json`);
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        downloadAnchor.remove();
+    checkAndAutoAdvanceDays();
+
+    function updateStats() {
+        let worlds = getActiveWorlds();
+        let total = worlds.length;
+        let ready = worlds.filter(w => w.day >= 180).length;
+        let waiting = total - ready;
+
+        document.getElementById('statTotal').innerText = total;
+        document.getElementById('statReady').innerText = ready;
+        document.getElementById('statWaiting').innerText = waiting;
+        document.getElementById('displayAccountCode').innerText = currentAccountCode;
+        document.getElementById('tabCount').innerText = total;
     }
 
-    // FITUR IMPOR DATA DARI FILE JSON
-    function importDataJson(event) {
-        const fileReader = new FileReader();
-        if (event.target.files[0]) {
-            fileReader.readAsText(event.target.files[0], "UTF-8");
-            fileReader.onload = function(e) {
-                try {
-                    const importedData = JSON.parse(e.target.result);
-                    if (Array.isArray(importedData)) {
-                        worlds = importedData;
-                    } else if (importedData && typeof importedData === 'object') {
-                        if (Array.isArray(importedData.worlds)) worlds = importedData.worlds;
-                        if (Array.isArray(importedData.notes)) notes = importedData.notes;
-                    }
-                    saveAndRender();
-                    showAestheticModal('success', 'Berhasil', 'Data world & catatan berhasil dipulihkan!');
-                } catch (error) {
-                    showAestheticModal('error', 'Gagal', 'Terjadi kesalahan saat membaca file JSON.');
+    function checkNotifications() {
+        const now = new Date();
+        const currentTimeStr = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
+
+        let worlds = getActiveWorlds();
+        let updated = false;
+
+        worlds.forEach((item) => {
+            if (item.day >= 180 && item.time === currentTimeStr && !item.notified) {
+                if (Notification.permission === "granted") {
+                    new Notification("Growtopia World Ready!", {
+                        body: `World [${item.name}] (${item.lock}) sudah mencapai target pecah!`,
+                    });
                 }
-            };
-        }
-    }
-
-    function showAestheticModal(type, title, message, callback = null) {
-        const container = document.getElementById('modalIconContainer');
-        const titleElem = document.getElementById('modalTitle');
-        const pathElem = document.getElementById('modalSvgPath');
-        
-        document.getElementById('aestheticModalText').innerText = message;
-        titleElem.innerText = title;
-        aestheticCallback = callback;
-
-        if (type === 'error') {
-            container.className = 'auth-logo-container error';
-            titleElem.style.color = '#ff4757';
-            pathElem.setAttribute('d', 'M16 16 36 36 M36 16 16 36');
-        } else {
-            container.className = 'auth-logo-container';
-            titleElem.style.color = '#00fff5';
-            pathElem.setAttribute('d', 'M14.1 27.2l7.1 7.2 16.7-16.8');
-        }
-
-        document.getElementById('aestheticModal').style.display = 'flex';
-    }
-
-    function closeAestheticModal() {
-        document.getElementById('aestheticModal').style.display = 'none';
-        if (typeof aestheticCallback === 'function') {
-            aestheticCallback();
-            aestheticCallback = null;
-        }
-    }
-
-    function setAuthCardHeader(formId, type) {
-        const container = document.getElementById(formId);
-        if (type === 'error') {
-            container.className = 'auth-logo-container error';
-            container.querySelector('.checkmark-check').setAttribute('d', 'M16 16 36 36 M36 16 16 36');
-        } else {
-            container.className = 'auth-logo-container';
-            container.querySelector('.checkmark-check').setAttribute('d', 'M14.1 27.2l7.1 7.2 16.7-16.8');
-        }
-    }
-
-    function cleanupInactiveAccounts() {
-        const usersDb = getUsersDatabase();
-        const now = Date.now();
-        let isDbChanged = false;
-
-        Object.keys(usersDb).forEach(username => {
-            const userData = usersDb[username];
-            if (userData.lastLogin && (now - userData.lastLogin > THREE_MONTHS_MS)) {
-                delete usersDb[username];
-                isDbChanged = true;
+                item.notified = true;
+                updated = true;
             }
         });
 
-        if (isDbChanged) {
-            localStorage.setItem('gt_users_db', JSON.stringify(usersDb));
+        if (updated) {
+            saveActiveWorlds(worlds);
         }
     }
 
-    function updateInactivityWarning() {
-        if (!currentUser) return;
-        const usersDb = getUsersDatabase();
-        const userData = usersDb[currentUser];
-        const warnElem = document.getElementById('checkinWarning');
-        
-        if (!userData || !userData.lastLogin) return;
+    setInterval(checkNotifications, 30000);
 
-        const now = Date.now();
-        const timePassed = now - userData.lastLogin;
-        const timeLeft = THREE_MONTHS_MS - timePassed;
+    /* --- FUNGSI PINDAH HALAMAN / TAB --- */
+    function switchTab(pageNumber) {
+        document.getElementById('page1').classList.remove('active');
+        document.getElementById('page2').classList.remove('active');
+        document.getElementById('tabBtn1').classList.remove('active');
+        document.getElementById('tabBtn2').classList.remove('active');
 
-        if (timeLeft <= 0) {
-            warnElem.innerHTML = "⚠️ Akun dalam masa tenggat penghapusan!";
-            warnElem.style.borderColor = "#ff4757";
-            warnElem.style.color = "#ff4757";
-        } else {
-            const daysLeft = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-            warnElem.innerHTML = `⚠️ Akun aktif (${daysLeft} hari menuju reset otomatis).`;
-            if (daysLeft < 15) {
-                warnElem.style.borderColor = "#ff4757";
-                warnElem.style.color = "#ff4757";
-            } else {
-                warnElem.style.borderColor = "#fffa65";
-                warnElem.style.color = "#fffa65";
-            }
+        document.getElementById(`page${pageNumber}`).classList.add('active');
+        document.getElementById(`tabBtn${pageNumber}`).classList.add('active');
+
+        if (pageNumber === 2) {
+            renderList();
         }
     }
 
-    function handleManualCheckin() {
-        if (!currentUser) return;
-        const usersDb = getUsersDatabase();
-        if (usersDb[currentUser]) {
-            usersDb[currentUser].lastLogin = Date.now();
-            localStorage.setItem('gt_users_db', JSON.stringify(usersDb));
-            updateInactivityWarning();
-            showAestheticModal('success', 'Berhasil', 'Check-in berhasil! Masa aktif akun Anda telah diperbarui.');
-        }
-    }
+    function renderList() {
+        const container = document.getElementById('worldListContainer');
+        container.innerHTML = '';
 
-    function openDeleteAccountModal() {
-        document.getElementById('deleteAccountModal').style.display = 'flex';
-    }
-    function closeDeleteAccountModal() {
-        document.getElementById('deleteAccountModal').style.display = 'none';
-    }
+        let worlds = getActiveWorlds();
 
-    function confirmDeleteAccount() {
-        if (!currentUser) return;
-        const usersDb = getUsersDatabase();
-        if (usersDb[currentUser]) {
-            delete usersDb[currentUser];
-            localStorage.setItem('gt_users_db', JSON.stringify(usersDb));
+        if (worlds.length === 0) {
+            container.innerHTML = `<div class="empty-state">Tidak ada data world di database akun ini.<br>Silakan tambah world di Halaman 1.</div>`;
+            updateStats();
+            return;
         }
 
-        const savedWorlds = localStorage.getItem('gt_global_worlds');
-        if (savedWorlds) {
-            let globalWorlds = JSON.parse(savedWorlds);
-            const remainingWorlds = globalWorlds.filter(w => w.owner !== currentUser);
-            localStorage.setItem('gt_global_worlds', JSON.stringify(remainingWorlds));
-        }
+        worlds.forEach((item, index) => {
+            let currentDay = item.day > 180 ? 180 : item.day;
+            let sisaHari = 180 - currentDay;
+            let percentage = Math.round((currentDay / 180) * 100);
 
-        const savedNotes = localStorage.getItem('gt_global_notes');
-        if (savedNotes) {
-            let globalNotes = JSON.parse(savedNotes);
-            const remainingNotes = globalNotes.filter(n => n.owner !== currentUser);
-            localStorage.setItem('gt_global_notes', JSON.stringify(remainingNotes));
-        }
+            let badgeHTML = currentDay >= 180 
+                ? `<span class="badge badge-ready">⚡ SIAP HANCUR (${item.time})</span>` 
+                : `<span class="badge badge-wait">Sisa ${sisaHari} Hari | Jam: ${item.time}</span>`;
 
-        closeDeleteAccountModal();
-        showAestheticModal('success', 'Terhapus', 'Akun Anda berhasil dihapus secara permanen.', () => {
-            handleLogout();
+            const card = document.createElement('div');
+            card.className = 'world-card';
+            card.id = `world-card-${index}`;
+            card.innerHTML = `
+                <div class="world-info">
+                    <span class="world-title">${item.name}</span>
+                    <span class="world-lock">${item.lock}</span>
+                </div>
+                <div>
+                    <div class="progress-info">
+                        <span>Hari ke-${currentDay} / 180</span>
+                        <span style="font-weight: bold; color: var(--accent);">${percentage}%</span>
+                    </div>
+                    <div class="progress-bar-bg" style="margin-top: 6px;">
+                        <div class="progress-bar-fill" style="width: ${percentage}%;"></div>
+                    </div>
+                </div>
+                <div class="world-footer">
+                    ${badgeHTML}
+                    <div class="card-actions">
+                        <button class="btn-action btn-edit" onclick="toggleEditPanel(${index})">Edit</button>
+                        <button class="btn-action btn-del" onclick="deleteWorld(${index})">Hapus</button>
+                    </div>
+                </div>
+
+                <!-- MENU SETTING / EDIT PANEL -->
+                <div class="edit-panel" id="editPanel-${index}">
+                    <div class="form-group" style="margin-bottom:8px;">
+                        <label>Edit Nama World</label>
+                        <input type="text" id="editName-${index}" value="${item.name}">
+                    </div>
+                    <div class="form-row" style="margin-bottom:8px;">
+                        <div>
+                            <label>Jenis Lock</label>
+                            <select id="editLock-${index}">
+                                <option value="Small Lock" ${item.lock === 'Small Lock' ? 'selected' : ''}>Small Lock</option>
+                                <option value="Big Lock" ${item.lock === 'Big Lock' ? 'selected' : ''}>Big Lock</option>
+                                <option value="Huge Lock" ${item.lock === 'Huge Lock' ? 'selected' : ''}>Huge Lock</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Posisi Hari (1-180)</label>
+                            <input type="number" id="editDay-${index}" min="1" max="180" value="${item.day}">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom:8px;">
+                        <label>Jam Target Pecah (HH:MM)</label>
+                        <input type="text" id="editTime-${index}" value="${item.time}" maxlength="5" placeholder="12:00">
+                    </div>
+                    <div class="edit-actions">
+                        <button class="btn-save-edit" onclick="saveEditWorld(${index})">Simpan</button>
+                        <button class="btn-cancel-edit" onclick="toggleEditPanel(${index})">Batal</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
         });
-    }
 
-    function cleanupExpiredWorlds() {
-        const now = Date.now();
-        const savedWorlds = localStorage.getItem('gt_global_worlds');
-        if (!savedWorlds) return;
-        let globalWorlds = JSON.parse(savedWorlds);
-        const remainingWorlds = globalWorlds.filter(w => w.targetDate > now);
-        if (remainingWorlds.length !== globalWorlds.length) {
-            worlds = remainingWorlds;
-            saveGlobalData();
-        }
-    }
-
-    function toggleAuthMode(mode) {
-        if (mode === 'register') {
-            document.getElementById('formLogin').style.display = 'none';
-            document.getElementById('formRegister').style.display = 'block';
-            setAuthCardHeader('regIconContainer', 'success');
-        } else {
-            document.getElementById('formRegister').style.display = 'none';
-            document.getElementById('formLogin').style.display = 'block';
-            setAuthCardHeader('loginIconContainer', 'success');
-        }
-    }
-
-    function getUsersDatabase() {
-        const users = localStorage.getItem('gt_users_db');
-        return users ? JSON.parse(users) : {};
-    }
-
-    function handleRegister() {
-        cleanupInactiveAccounts();
-        const username = document.getElementById('regUser').value.trim().toUpperCase();
-        const password = document.getElementById('regPass').value.trim();
-
-        if (!username || !password) {
-            setAuthCardHeader('regIconContainer', 'error');
-            showAestheticModal('error', 'Gagal', 'Harap isi Username dan Password!');
-            return;
-        }
-
-        const usersDb = getUsersDatabase();
-        if (usersDb[username]) {
-            setAuthCardHeader('regIconContainer', 'error');
-            showAestheticModal('error', 'Gagal', 'Username/Akun ini telah didaftarkan!');
-            return;
-        }
-
-        usersDb[username] = { password: password, lastLogin: Date.now() };
-        localStorage.setItem('gt_users_db', JSON.stringify(usersDb));
-
-        document.getElementById('regUser').value = '';
-        document.getElementById('regPass').value = '';
-
-        setAuthCardHeader('regIconContainer', 'success');
-        showAestheticModal('success', 'Berhasil', 'Pendaftaran berhasil! Silakan login.', () => {
-            toggleAuthMode('login');
-        });
-    }
-
-    function handleLogin() {
-        cleanupInactiveAccounts();
-        const username = document.getElementById('loginUser').value.trim().toUpperCase();
-        const password = document.getElementById('loginPass').value.trim();
-
-        if (!username || !password) {
-            setAuthCardHeader('loginIconContainer', 'error');
-            showAestheticModal('error', 'Gagal', 'Harap isi Username dan Password!');
-            return;
-        }
-
-        const usersDb = getUsersDatabase();
-        
-        if (!usersDb[username]) {
-            setAuthCardHeader('loginIconContainer', 'error');
-            showAestheticModal('error', 'Gagal', 'Akun tidak ditemukan atau telah dihapus otomatis! Silakan daftar baru.');
-            return;
-        }
-
-        if (usersDb[username].password !== password) {
-            setAuthCardHeader('loginIconContainer', 'error');
-            showAestheticModal('error', 'Gagal', 'Password salah! Periksa kembali password Anda.');
-            return;
-        }
-
-        usersDb[username].lastLogin = Date.now();
-        localStorage.setItem('gt_users_db', JSON.stringify(usersDb));
-
-        document.getElementById('loginUser').value = '';
-        document.getElementById('loginPass').value = '';
-
-        currentUser = username;
-        localStorage.setItem('gt_logged_user', currentUser);
-
-        setAuthCardHeader('loginIconContainer', 'success');
-        showAestheticModal('success', 'Berhasil', 'Login berhasil! Selamat datang kembali.', () => {
-            checkLoginSession();
-        });
-    }
-
-    function checkLoginSession() {
-        cleanupInactiveAccounts();
-        const savedUser = localStorage.getItem('gt_logged_user');
-        const usersDb = getUsersDatabase();
-
-        if (savedUser && usersDb[savedUser]) {
-            currentUser = savedUser;
-            document.getElementById('currentUserDisplay').innerText = currentUser;
-            document.getElementById('loginView').style.display = 'none';
-            document.getElementById('appView').style.display = 'block';
-            updateInactivityWarning();
-            loadGlobalData();
-        } else {
-            localStorage.removeItem('gt_logged_user');
-            currentUser = null;
-            document.getElementById('loginView').style.display = 'flex';
-            document.getElementById('appView').style.display = 'none';
-            setAuthCardHeader('loginIconContainer', 'success');
-        }
-    }
-
-    function handleLogout() {
-        localStorage.removeItem('gt_logged_user');
-        currentUser = null;
-        worlds = [];
-        notes = [];
-        checkLoginSession();
-    }
-
-    function loadGlobalData() {
-        cleanupExpiredWorlds();
-        const savedWorlds = localStorage.getItem('gt_global_worlds');
-        worlds = savedWorlds ? JSON.parse(savedWorlds) : [];
-
-        const savedNotes = localStorage.getItem('gt_global_notes');
-        notes = savedNotes ? JSON.parse(savedNotes) : [];
-
-        saveAndRender();
-    }
-
-    function saveGlobalData() {
-        localStorage.setItem('gt_global_worlds', JSON.stringify(worlds));
-        localStorage.setItem('gt_global_notes', JSON.stringify(notes));
-    }
-
-    function switchTab(tabName) {
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
-        if (tabName === 'beranda') {
-            document.querySelectorAll('.tab-btn')[0].classList.add('active');
-            document.getElementById('tab-beranda').classList.add('active');
-        } else if (tabName === 'kelola') {
-            document.querySelectorAll('.tab-btn')[1].classList.add('active');
-            document.getElementById('tab-kelola').classList.add('active');
-        } else if (tabName === 'catatan') {
-            document.querySelectorAll('.tab-btn')[2].classList.add('active');
-            document.getElementById('tab-catatan').classList.add('active');
-        } else if (tabName === 'harga') {
-            document.querySelectorAll('.tab-btn')[3].classList.add('active');
-            document.getElementById('tab-harga').classList.add('active');
-        } else if (tabName === 'jam') {
-            document.querySelectorAll('.tab-btn')[4].classList.add('active');
-            document.getElementById('tab-jam').classList.add('active');
-        }
-    }
-
-    function switchSubTab(subType) {
-        const myBtn = document.getElementById('subTabMyNotesBtn');
-        const pubBtn = document.getElementById('subTabPublicNotesBtn');
-        const myCont = document.getElementById('subContainerMyNotes');
-        const pubCont = document.getElementById('subContainerPublicNotes');
-
-        if (subType === 'my') {
-            myBtn.classList.add('active');
-            pubBtn.classList.remove('active');
-            myCont.style.display = 'block';
-            pubCont.style.display = 'none';
-        } else {
-            pubBtn.classList.add('active');
-            myBtn.classList.remove('active');
-            pubCont.style.display = 'block';
-            myCont.style.display = 'none';
-        }
-    }
-
-    function openWideNoteModal() {
-        document.getElementById('wideNoteTitle').value = '';
-        document.getElementById('wideNoteContent').value = '';
-        document.getElementById('wideNotePrivacy').value = 'Private';
-        clearSelectedImage();
-        document.getElementById('wideNoteModal').style.display = 'flex';
-    }
-
-    function closeWideNoteModal() {
-        document.getElementById('wideNoteModal').style.display = 'none';
-    }
-
-    function saveWideNote() {
-        const titleInput = document.getElementById('wideNoteTitle');
-        const contentInput = document.getElementById('wideNoteContent');
-        const privacyInput = document.getElementById('wideNotePrivacy');
-
-        const title = titleInput.value.trim();
-        const content = contentInput.value.trim();
-        const privacy = privacyInput.value;
-
-        if (!title && !content && !temporaryBase64Image) {
-            showAestheticModal('error', 'Gagal', 'Harap isi judul, catatan, atau lampirkan foto!');
-            return;
-        }
-
-        const newNote = {
-            id: Date.now(),
-            owner: currentUser,
-            title: title || 'Tanpa Judul',
-            content: content,
-            image: temporaryBase64Image || '',
-            privacy: privacy,
-            date: new Date().toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
-        };
-
-        notes.unshift(newNote);
-        saveAndRender();
-        closeWideNoteModal();
-        showAestheticModal('success', 'Berhasil', 'Catatan & foto berhasil disimpan!');
-    }
-
-    function openDeleteNoteModal(id) {
-        selectedNoteIdToDelete = id;
-        document.getElementById('deleteNoteModal').style.display = 'flex';
-    }
-    function closeDeleteNoteModal() {
-        selectedNoteIdToDelete = null;
-        document.getElementById('deleteNoteModal').style.display = 'none';
-    }
-    function confirmDeleteNote() {
-        if (selectedNoteIdToDelete) {
-            notes = notes.filter(n => n.id !== selectedNoteIdToDelete);
-            saveAndRender();
-            closeDeleteNoteModal();
-        }
+        updateStats();
     }
 
     function addWorld() {
         const nameInput = document.getElementById('worldName');
         const lockInput = document.getElementById('lockType');
-        const privacyInput = document.getElementById('privacyType');
-        const daysInput = document.getElementById('daysRemaining');
-        const timeTextInput = document.getElementById('targetTimeText');
-        const timezoneSelect = document.getElementById('timezoneSelect');
-        const hideOwnerInput = document.getElementById('hideOwner');
+        const dayInput = document.getElementById('currentDay');
+        const timeInput = document.getElementById('targetTime');
 
-        const worldName = nameInput.value.trim().toUpperCase();
-        
-        const doorFields = document.querySelectorAll('.door-id-field');
-        let doorIds = [];
-        doorFields.forEach(field => {
-            const val = field.value.trim();
-            if (val !== '') {
-                doorIds.push(val);
-            }
-        });
+        const name = nameInput.value.trim().toUpperCase();
+        const lock = lockInput.value;
+        const day = parseInt(dayInput.value);
+        const time = timeInput.value.trim();
 
-        const lockType = lockInput.value;
-        const privacyType = privacyInput.value;
-        const days = parseInt(daysInput.value, 10);
-        const timeStr = timeTextInput.value.trim();
-        const selectedZone = timezoneSelect.value;
-        const isHidden = hideOwnerInput.checked;
-
-        if (!worldName) {
-            showAestheticModal('error', 'Gagal', 'Harap isi Nama World!');
-            return;
-        }
-        if (isNaN(days) || days < 1 || days > 180) {
-            showAestheticModal('error', 'Gagal', 'Masukkan Sisa Hari antara 1 - 180!');
+        if (!name || isNaN(day) || !time) {
+            showToast("Harap isi semua data dengan benar!");
             return;
         }
 
-        let targetDateObj = new Date();
-        targetDateObj.setDate(targetDateObj.getDate() + days);
-
-        if (timeStr) {
-            let parts = timeStr.replace('.', ':').split(':');
-            let hours = parseInt(parts[0], 10) || 0;
-            let minutes = parseInt(parts[1], 10) || 0;
-            if (hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60) {
-                targetDateObj.setHours(hours, minutes, 0, 0);
-            } else {
-                showAestheticModal('error', 'Gagal', 'Format jam salah! Contoh: 12:00');
-                return;
-            }
+        if (day < 1 || day > 180) {
+            showToast("Posisi hari antara 1 sampai 180!");
+            return;
         }
 
-        const newWorld = {
-            id: Date.now(),
-            owner: currentUser,
-            hideOwner: isHidden,
-            name: worldName,
-            doorIds: doorIds,
-            lockType: lockType,
-            privacy: privacyType,
-            targetDate: targetDateObj.getTime(),
-            timezone: selectedZone
-        };
-
-        worlds.push(newWorld);
-        saveAndRender();
+        let worlds = getActiveWorlds();
+        worlds.push({ name, lock, day, time, notified: false });
+        saveActiveWorlds(worlds);
 
         nameInput.value = '';
-        resetDoorInputsForm();
-        daysInput.value = '';
-        timeTextInput.value = '';
-        hideOwnerInput.checked = false;
-        showAestheticModal('success', 'Berhasil', 'World baru berhasil ditambahkan!', () => {
-            switchTab('beranda');
-        });
-    }
+        dayInput.value = '';
+        timeInput.value = '12:00';
 
-    function openDeleteModal(id, name) {
-        selectedWorldIdToDelete = id;
-        document.getElementById('modalText').innerText = `Yakin ingin menghapus world "${name}"?`;
-        document.getElementById('deleteModal').style.display = 'flex';
-    }
-    function closeDeleteModal() {
-        selectedWorldIdToDelete = null;
-        document.getElementById('deleteModal').style.display = 'none';
-    }
-    function confirmDeleteWorld() {
-        if (selectedWorldIdToDelete) {
-            worlds = worlds.filter(w => w.id !== selectedWorldIdToDelete);
-            saveAndRender();
-            closeDeleteModal();
-        }
-    }
-
-    function saveAndRender() {
-        worlds.sort((a, b) => a.targetDate - b.targetDate);
-        saveGlobalData();
-        renderLists();
-        renderNotesList();
-        updateCountdowns();
         updateStats();
+        showToast("World berhasil disimpan! Cek Halaman 2.");
+        
+        switchTab(2);
     }
 
-    function getVisibleWorldsForHome() {
-        return worlds.filter(w => w.owner === currentUser || w.privacy === 'Public');
+    function toggleEditPanel(index) {
+        const panel = document.getElementById(`editPanel-${index}`);
+        panel.classList.toggle('active');
     }
 
-    function getMyWorlds() {
-        return worlds.filter(w => w.owner === currentUser);
-    }
+    function saveEditWorld(index) {
+        const name = document.getElementById(`editName-${index}`).value.trim().toUpperCase();
+        const lock = document.getElementById(`editLock-${index}`).value;
+        const day = parseInt(document.getElementById(`editDay-${index}`).value);
+        const time = document.getElementById(`editTime-${index}`).value.trim();
 
-    function getMyNotes() {
-        return notes.filter(n => n.owner === currentUser);
-    }
-
-    function getPublicNotes() {
-        return notes.filter(n => n.privacy === 'Public');
-    }
-
-    function updateStats() {
-        const now = new Date().getTime();
-        const visibleWorlds = getVisibleWorldsForHome();
-        document.getElementById('totalWorlds').innerText = visibleWorlds.length;
-
-        const urgentCount = visibleWorlds.filter(w => (w.targetDate - now) > 0 && (w.targetDate - now) <= (24 * 60 * 60 * 1000)).length;
-        document.getElementById('urgentWorlds').innerText = urgentCount;
-
-        const readyCount = visibleWorlds.filter(w => (w.targetDate - now) <= 0).length;
-        document.getElementById('readyWorlds').innerText = readyCount;
-    }
-
-    function renderNotesList() {
-        const myNotesContainer = document.getElementById('notesListContainer');
-        const publicNotesContainer = document.getElementById('publicNotesListContainer');
-
-        myNotesContainer.innerHTML = '';
-        publicNotesContainer.innerHTML = '';
-
-        const myNotes = getMyNotes();
-        if (myNotes.length === 0) {
-            myNotesContainer.innerHTML = '<div style="text-align:center; padding: 15px; color: #8a8d9b; font-size: 12px; grid-column: 1/-1;">Belum ada catatan pribadi yang tersimpan.</div>';
-        } else {
-            myNotes.forEach(note => {
-                const privacyClass = note.privacy === 'Public' ? 'tag-public' : 'tag-private';
-                const imageHtml = note.image ? `<img src="${note.image}" class="note-img-preview" onclick="openZoomModal('${note.image}')" title="Klik untuk memperbesar foto">` : '';
-                const cardNote = document.createElement('div');
-                cardNote.className = 'note-item-card';
-                cardNote.innerHTML = `
-                    <div>
-                        <div class="world-info-header">
-                            <span class="note-title">${note.title}</span>
-                            <span class="tag-badge ${privacyClass}">${note.privacy || 'Private'}</span>
-                        </div>
-                        <div class="note-meta" style="margin: 6px 0;">🕒 ${note.date}</div>
-                        ${note.content ? `<div class="note-body">${note.content}</div>` : ''}
-                        ${imageHtml}
-                    </div>
-                    <div style="margin-top: 10px;">
-                        <button class="btn-delete" style="width: 100%; padding: 6px;" onclick="openDeleteNoteModal(${note.id})">🗑️ Hapus Catatan</button>
-                    </div>
-                `;
-                myNotesContainer.appendChild(cardNote);
-            });
+        if (!name || isNaN(day) || !time) {
+            showToast("Data edit tidak boleh kosong!");
+            return;
         }
 
-        const publicNotes = getPublicNotes();
-        if (publicNotes.length === 0) {
-            publicNotesContainer.innerHTML = '<div style="text-align:center; padding: 15px; color: #8a8d9b; font-size: 12px; grid-column: 1/-1;">Belum ada catatan publik dari player lain.</div>';
-        } else {
-            publicNotes.forEach(note => {
-                const imageHtml = note.image ? `<img src="${note.image}" class="note-img-preview" onclick="openZoomModal('${note.image}')" title="Klik untuk memperbesar foto">` : '';
-                const cardNote = document.createElement('div');
-                cardNote.className = 'note-item-card';
-                cardNote.innerHTML = `
-                    <div>
-                        <div class="world-info-header">
-                            <span class="note-title">${note.title}</span>
-                            <span class="tag-badge tag-public">Public</span>
-                        </div>
-                        <div class="note-meta" style="margin: 6px 0;">👤 ${note.owner} | 🕒 ${note.date}</div>
-                        ${note.content ? `<div class="note-body">${note.content}</div>` : ''}
-                        ${imageHtml}
-                    </div>
-                    ${note.owner === currentUser ? `
-                    <div style="margin-top: 10px;">
-                        <button class="btn-delete" style="width: 100%; padding: 6px;" onclick="openDeleteNoteModal(${note.id})">🗑️ Hapus Catatan</button>
-                    </div>` : ''}
-                `;
-                publicNotesContainer.appendChild(cardNote);
-            });
+        if (day < 1 || day > 180) {
+            showToast("Posisi hari harus antara 1 - 180!");
+            return;
         }
+
+        let worlds = getActiveWorlds();
+        worlds[index] = {
+            name: name,
+            lock: lock,
+            day: day,
+            time: time,
+            notified: day >= 180 ? worlds[index].notified : false
+        };
+
+        saveActiveWorlds(worlds);
+        renderList();
+        showToast("Perubahan world berhasil disimpan!");
     }
 
-    function renderLists() {
-        const homeList = document.getElementById('homeWorldList');
-        const manageList = document.getElementById('manageWorldList');
-
-        homeList.innerHTML = '';
-        manageList.innerHTML = '';
-
-        const visibleHomeWorlds = getVisibleWorldsForHome();
-        const myWorlds = getMyWorlds();
-
-        if (visibleHomeWorlds.length === 0) {
-            homeList.innerHTML = '<div style="text-align:center; padding: 15px; color: #8a8d9b; font-size: 12px; grid-column: 1/-1;">Belum ada world dipantau.</div>';
-        } else {
-            visibleHomeWorlds.forEach(world => {
-                const targetZone = world.timezone || 'Asia/Jakarta';
-                const dateLocalFormatted = new Date(world.targetDate).toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                const dateCountryFormatted = new Date(world.targetDate).toLocaleString('id-ID', { timeZone: targetZone, day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                
-                const zoneObj = locations.find(l => l.zone === targetZone);
-                const zoneName = zoneObj ? zoneObj.name : targetZone;
-
-                const lockBadgeClass = world.lockType === 'Lock Luar' ? 'tag-lock-luar' : 'tag-lock-dalam';
-                const privacyBadgeClass = world.privacy === 'Public' ? 'tag-public' : 'tag-private';
-                const displayOwner = world.hideOwner ? 'PLAYER ARE HIDING 🕶' : world.owner;
-                
-                let doorIdDisplay = '';
-                let doorIdsString = '';
-                if (world.doorIds && world.doorIds.length > 0) {
-                    doorIdDisplay = `<br>🚪 <strong>Door ID:</strong> ${world.doorIds.join(', ')}`;
-                    doorIdsString = world.doorIds.join(', ');
-                }
-
-                const cardHome = document.createElement('div');
-                cardHome.className = 'world-item-card';
-                cardHome.innerHTML = `
-                    <div>
-                        <div class="world-info-header">
-                            <span class="world-title">${world.name}</span>
-                            <span class="status-badge" id="badge-home-${world.id}">Loading...</span>
-                        </div>
-                        <div style="margin-bottom: 8px;">
-                            <span class="tag-badge ${lockBadgeClass}">${world.lockType || 'Lock Luar'}</span>
-                            <span class="tag-badge ${privacyBadgeClass}">${world.privacy || 'Private'}</span>
-                            <span style="font-size: 10px; color: #8a8d9b; margin-left: 4px;">by ${displayOwner}</span>
-                        </div>
-                        <div class="time-detail-text">
-                            📅 <strong>Lock HP:</strong> ${dateLocalFormatted}${doorIdDisplay}<br>
-                            <span class="time-subtext">🌐 <strong>Jam Target:</strong> ${dateCountryFormatted} (${zoneName})</span>
-                        </div>
-                    </div>
-                    <div class="countdown-box">
-                        <div class="countdown-label">Sisa Waktu Lock</div>
-                        <div class="countdown-value" id="cd-home-${world.id}">Loading...</div>
-                    </div>
-                    <button class="btn-copy" onclick="copyJoinCommand('${world.name}', '${doorIdsString}')">📋 Salin Perintah /join</button>
-                `;
-                homeList.appendChild(cardHome);
-            });
-        }
-
-        if (myWorlds.length === 0) {
-            manageList.innerHTML = '<div style="text-align:center; padding: 15px; color: #8a8d9b; font-size: 12px; grid-column: 1/-1;">Anda belum membuat world apapun.</div>';
-        } else {
-            myWorlds.forEach(world => {
-                const targetZone = world.timezone || 'Asia/Jakarta';
-                const dateLocalFormatted = new Date(world.targetDate).toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                const dateCountryFormatted = new Date(world.targetDate).toLocaleString('id-ID', { timeZone: targetZone, day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                
-                const zoneObj = locations.find(l => l.zone === targetZone);
-                const zoneName = zoneObj ? zoneObj.name : targetZone;
-
-                const lockBadgeClass = world.lockType === 'Lock Luar' ? 'tag-lock-luar' : 'tag-lock-dalam';
-                const privacyBadgeClass = world.privacy === 'Public' ? 'tag-public' : 'tag-private';
-                
-                let doorIdDisplay = '';
-                let doorIdsString = '';
-                if (world.doorIds && world.doorIds.length > 0) {
-                    doorIdDisplay = `<br>🚪 <strong>Door ID:</strong> ${world.doorIds.join(', ')}`;
-                    doorIdsString = world.doorIds.join(', ');
-                }
-
-                const cardManage = document.createElement('div');
-                cardManage.className = 'world-item-card';
-                cardManage.innerHTML = `
-                    <div>
-                        <div class="world-info-header">
-                            <span class="world-title">${world.name}</span>
-                            <span class="status-badge" id="badge-manage-${world.id}">Loading...</span>
-                        </div>
-                        <div style="margin-bottom: 8px;">
-                            <span class="tag-badge ${lockBadgeClass}">${world.lockType || 'Lock Luar'}</span>
-                            <span class="tag-badge ${privacyBadgeClass}">${world.privacy || 'Private'}</span>
-                            ${world.hideOwner ? '<span style="font-size: 10px; color: #00fff5; margin-left: 4px;">(PLAYER ARE HIDING 🕶)</span>' : ''}
-                        </div>
-                        <div class="time-detail-text">
-                            📅 <strong>Lock HP:</strong> ${dateLocalFormatted}${doorIdDisplay}<br>
-                            <span class="time-subtext">🌐 <strong>Jam Target:</strong> ${dateCountryFormatted} (${zoneName})</span>
-                        </div>
-                    </div>
-                    <div class="countdown-box">
-                        <div class="countdown-label">Sisa Waktu</div>
-                        <div class="countdown-value" id="cd-manage-${world.id}">Loading...</div>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn-copy" onclick="copyJoinCommand('${world.name}', '${doorIdsString}')">📋 Salin /join</button>
-                        <button class="btn-delete" onclick="openDeleteModal(${world.id}, '${world.name}')">🗑️ Hapus</button>
-                    </div>
-                `;
-                manageList.appendChild(cardManage);
-            });
-        }
+    function showCyberModal(code) {
+        document.getElementById('modalCodeText').innerText = code;
+        document.getElementById('cyberModal').classList.add('active');
     }
 
-    function updateCountdowns() {
-        const now = new Date().getTime();
-        worlds.forEach(world => {
-            const elHome = document.getElementById(`cd-home-${world.id}`);
-            const elManage = document.getElementById(`cd-manage-${world.id}`);
-            const badgeHome = document.getElementById(`badge-home-${world.id}`);
-            const badgeManage = document.getElementById(`badge-manage-${world.id}`);
+    function closeCyberModal() {
+        document.getElementById('cyberModal').classList.remove('active');
+    }
 
-            const distance = world.targetDate - now;
-            let textOutput = '';
-            let badgeText = '';
-            let badgeClass = '';
-            let colorStyle = '#00ff88';
-
-            if (distance <= 0) {
-                textOutput = "DECAYED!";
-                badgeText = "🔴 Expired";
-                badgeClass = "badge-expired";
-                colorStyle = "#ff4757";
-            } else {
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                textOutput = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-
-                if (days === 0) {
-                    badgeText = "🟡 Prioritas";
-                    badgeClass = "badge-urgent";
-                    colorStyle = "#fffa65";
-                } else {
-                    badgeText = `🟢 Sisa ${days} Hari`;
-                    badgeClass = "badge-safe";
-                    colorStyle = "#00ff88";
-                }
-            }
-
-            if (elHome) { elHome.innerText = textOutput; elHome.style.color = colorStyle; }
-            if (elManage) { elManage.innerText = textOutput; elManage.style.color = colorStyle; }
-            if (badgeHome) { badgeHome.innerText = badgeText; badgeHome.className = `status-badge ${badgeClass}`; }
-            if (badgeManage) { badgeManage.innerText = badgeText; badgeManage.className = `status-badge ${badgeClass}`; }
+    function copyModalCode() {
+        const codeText = document.getElementById('modalCodeText').innerText;
+        navigator.clipboard.writeText(codeText).then(() => {
+            showToast("Kode berhasil disalin!");
+        }).catch(err => {
+            showToast("Gagal menyalin kode.");
         });
+    }
+
+    function createNewAccount() {
+        let newCode = generateRandomCode();
+        while (allAccounts[newCode]) {
+            newCode = generateRandomCode();
+        }
+        currentAccountCode = newCode;
+        allAccounts[currentAccountCode] = [];
+        
+        localStorage.setItem('gt_active_account', currentAccountCode);
+        localStorage.setItem('gt_all_accounts', JSON.stringify(allAccounts));
+
         updateStats();
+        showCyberModal(currentAccountCode);
     }
 
-    function renderClockCards() {
-        const grid = document.getElementById('clockGrid');
-        grid.innerHTML = '';
-        locations.forEach((loc, index) => {
-            const card = document.createElement('div');
-            card.className = 'clock-card';
-            card.innerHTML = `
-                <div class="country-flag">${loc.flag}</div>
-                <div class="country-name">${loc.name}</div>
-                <div class="time-display" id="time-${index}">--:--</div>
-                <div class="date-display" id="date-${index}">-</div>
-            `;
-            grid.appendChild(card);
-        });
+    function toggleLoadPanel() {
+        const panel = document.getElementById('loadPanel');
+        panel.classList.toggle('active');
     }
 
-    function updateClocks() {
-        const now = new Date();
-        locations.forEach((loc, index) => {
-            const timeElem = document.getElementById(`time-${index}`);
-            const dateElem = document.getElementById(`date-${index}`);
-            if (timeElem && dateElem) {
-                const timeString = now.toLocaleTimeString('id-ID', { timeZone: loc.zone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-                const dateString = now.toLocaleDateString('id-ID', { timeZone: loc.zone, day: 'numeric', month: 'short' });
-                timeElem.innerText = timeString.replace(/\./g, ':');
-                dateElem.innerText = dateString;
+    function loadAccountByCode() {
+        const inputCode = document.getElementById('inputAccountCode').value.trim().toUpperCase();
+
+        if (inputCode.length !== 5) {
+            showToast("Kode harus tepat 5 karakter!");
+            return;
+        }
+
+        if (allAccounts[inputCode]) {
+            currentAccountCode = inputCode;
+            localStorage.setItem('gt_active_account', currentAccountCode);
+            updateStats();
+            toggleLoadPanel();
+            document.getElementById('inputAccountCode').value = '';
+            showToast(`Berhasil memuat akun [${currentAccountCode}]!`);
+        } else {
+            let choice = confirm(`Kode [ ${inputCode} ] tidak ditemukan. Buat akun baru dengan kode ini?`);
+            if (choice) {
+                currentAccountCode = inputCode;
+                if (!allAccounts[currentAccountCode]) {
+                    allAccounts[currentAccountCode] = [];
+                }
+                localStorage.setItem('gt_active_account', currentAccountCode);
+                localStorage.setItem('gt_all_accounts', JSON.stringify(allAccounts));
+                updateStats();
+                toggleLoadPanel();
+                document.getElementById('inputAccountCode').value = '';
+                showToast(`Akun baru [${currentAccountCode}] diaktifkan!`);
             }
-        });
+        }
     }
 
-    checkLoginSession();
-    renderClockCards();
-    updateClocks();
+    function deleteWorld(index) {
+        const card = document.getElementById(`world-card-${index}`);
+        card.classList.add('sliced');
+        showToast("⚡ SWISH! Samurai Slash!");
 
-    setInterval(() => {
-        updateCountdowns();
-        updateClocks();
-        updateInactivityWarning();
-    }, 1000);
+        // Waktu hapus data disesuaikan dengan durasi animasi baru (1.2 detik)
+        setTimeout(() => {
+            let worlds = getActiveWorlds();
+            worlds.splice(index, 1);
+            saveActiveWorlds(worlds);
+            renderList();
+            showToast("World berhasil ditebas & dihapus.");
+        }, 1200);
+    }
+
+    updateStats();
 </script>
+
 </body>
 </html>
